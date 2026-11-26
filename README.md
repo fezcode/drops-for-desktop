@@ -1,45 +1,77 @@
-# Drops for desktop
+<p align="center">
+  <img src="Assets/banner.png" alt="Drops" width="100%" />
+</p>
 
-![Drops](Assets/banner.png)
+<h1 align="center">Drops for desktop</h1>
 
-`Drops` sends a file to your other device, from a window and from the tray. It is the desktop
-client for [Drops](https://drops.fezcode.studio): put a file in on one device, take it out on
-another, and everything deletes itself after an hour.
+<p align="center">
+  Send a file to your other device, from a window and from the tray.<br />
+  Everything deletes itself after an hour.
+</p>
 
-Built with **Avalonia UI** and **C#**. It is a native app, not a web view: the interface is a
-one-to-one rebuild of the Drops page in the Fezcode Studio "Daylight" kit, and it talks to the
-Drops server's own API. It runs on Windows, macOS and Linux.
+<p align="center">
+  <a href="https://github.com/fezcode/drops-for-desktop/releases">Download</a>
+  &nbsp;·&nbsp;
+  <a href="#settings">Settings</a>
+  &nbsp;·&nbsp;
+  <a href="#building">Building</a>
+  &nbsp;·&nbsp;
+  <a href="#releasing">Releasing</a>
+</p>
+
+---
+
+Drops for desktop is the native client for [Drops](https://drops.fezcode.studio), a temporary
+file drop between your own devices. Put a file in on one device, take it out on another.
+
+It is built with **Avalonia UI** and **C#**, and runs on **Windows, macOS and Linux**. It is not
+a web view: every control is native, the interface is a one-to-one rebuild of the Drops page in
+the Fezcode Studio "Daylight" kit, and it talks to the Drops server through its own API.
+
+<p align="center">
+  <img src="Assets/screenshot-drop.png" alt="The drop: a zone to put files in, and the files waiting to be taken out" width="49%" />
+  <img src="Assets/screenshot-signin.png" alt="The sign-in screen" width="49%" />
+</p>
 
 ## What it does
 
-- **Put files in**: drag them onto the window, paste them, or choose them. They are sent one at
-  a time, with honest progress.
-- **Send a piece of text** instead: a link, a note, a code.
-- **Take files out**: Save, View (pictures and video open in your own viewer), Copy (text), Remove.
-- **Lives in the tray**: closing the window keeps Drops running. The tray icon shows how many
-  files are in the drop and offers *Show Drops*, *Send files…*, *Send clipboard*, *Sign out*
-  and *Quit*.
-- **Stays signed in**: the session is kept between runs, until you sign out from the tray.
-- **Its own title bar**, in the same look as the rest of the window.
-- Change your password from the bottom of the window.
+| | |
+|---|---|
+| **Put files in** | Drag them onto the window, paste them, or choose them. They are sent one at a time, so progress stays honest on a slow link. |
+| **Send text** | A link, a note, a code. It arrives as a small text file you can copy with one click. |
+| **Take files out** | Save a file anywhere, view pictures and video in your own viewer, copy text, or remove what you no longer need. |
+| **Watch the clock** | Every file carries a gauge showing how long it has left before it deletes itself. |
+| **Live in the tray** | Closing the window keeps Drops running. The tray icon tells you how many files are in the drop. |
+| **Stay signed in** | The session is kept between runs, until you sign out from the tray. |
 
 Accounts are by invitation. There is no sign-up.
 
-## Releases
+### The tray menu
 
-Download the latest build from the [Releases](https://github.com/fezcode/drops-for-desktop/releases) page:
+| Item | What it does |
+|---|---|
+| Show Drops | Brings the window forward. Clicking the tray icon does the same. |
+| Send files… | Opens the file picker and sends what you choose. |
+| Send clipboard | Sends the files on the clipboard, or its text if there are no files. |
+| Sign out | Ends the session on this device and forgets it. |
+| Quit | Stops Drops. |
+
+## Install
+
+Download the latest build from the [Releases](https://github.com/fezcode/drops-for-desktop/releases) page.
 
 | System | File |
 |---|---|
 | Windows | `Drops-Setup-<version>.exe` |
-| macOS (Apple Silicon / Intel) | `Drops-<version>-osx-arm64.dmg` / `Drops-<version>-osx-x64.dmg` |
+| macOS, Apple Silicon | `Drops-<version>-osx-arm64.dmg` |
+| macOS, Intel | `Drops-<version>-osx-x64.dmg` |
 | Linux | `Drops-<version>-linux-x64.tar.gz` |
 
-The macOS app is signed ad-hoc, not notarized: the first time, right-click it and choose **Open**.
+The macOS app is signed ad-hoc and not notarized. The first time, right-click it and choose **Open**.
 
 ## Settings
 
-Drops keeps its settings and session in the fezcode folder:
+Drops keeps its settings and its session in the fezcode folder.
 
 | System | Folder |
 |---|---|
@@ -47,9 +79,9 @@ Drops keeps its settings and session in the fezcode folder:
 | macOS | `~/Library/Application Support/fezcode/Drops` |
 | Linux | `~/.config/fezcode/Drops` (follows `XDG_CONFIG_HOME`) |
 
-Set `DROPS_HOME` to use another folder.
+Set the `DROPS_HOME` environment variable to use another folder.
 
-`settings.json`:
+**`settings.json`**
 
 ```json
 {
@@ -60,40 +92,55 @@ Set `DROPS_HOME` to use another folder.
 }
 ```
 
-- `server`: the Drops server to use. Change it to point at your own.
-- `closeToTray`: `false` makes closing the window quit Drops.
+| Key | Meaning |
+|---|---|
+| `server` | The Drops server to use. Change it to point at your own. |
+| `closeToTray` | `true` keeps Drops in the tray when the window is closed. `false` makes closing quit. |
+| `width`, `height` | The window size, remembered between runs. |
 
-`session` holds the sign-in session. On Windows it is encrypted for your user account; on macOS
-and Linux it is a file only you can read. Signing out (from the tray menu) removes it.
+**`session`** holds the sign-in session. On Windows it is encrypted for your user account. On
+macOS and Linux it is a file only you can read. Signing out removes it. Your password is never
+stored.
 
 ## Command line
 
 ```
-Drops              open the window (or bring the running copy forward)
+Drops              open the window, or bring the running copy forward
 Drops --hidden     start in the tray without opening the window
-Drops --version
-Drops --help
+Drops --version    show the version
+Drops --help       show help
 ```
 
-## Build requirements
+Only one copy runs per user. Starting Drops again brings the running copy forward.
 
-- **.NET 8.0 SDK** (or newer)
+## Building
+
+You need the **.NET 8 SDK** or newer.
 
 ```powershell
 dotnet run
 ```
 
-## Packaging and releasing
+The project is one Avalonia application:
 
-The version lives in `<Version>` in `Drops.csproj`; keep `[app] version` in `forge.toml` in step with it.
+| Folder | Contents |
+|---|---|
+| `Views/` | The window: sign-in, the drop, the upload queue and the title bar. |
+| `Controls/` | The moving parts of the kit, drawn in code: the colour field (a Skia shader), the rings and falling shapes, the logo mark and the time gauge. |
+| `Services/` | The Drops API client, settings, and the saved session. |
+| `Assets/` | Fonts, icons and README images, generated by `tools/make-assets.py`. |
 
-**Windows.** The installer is built with [Forge](https://github.com/fezcode/Forge) from `forge.toml`:
+## Releasing
+
+The version lives in `<Version>` in `Drops.csproj`. Keep `[app] version` in `forge.toml` in step with it.
+
+**1. Build the Windows installer.** It is made with [Forge](https://github.com/fezcode/Forge) from `forge.toml`:
 
 ```powershell
-.\build-installer.ps1     # publish + bundle -> dist\Drops-Setup-<version>.exe
+.\build-installer.ps1     # publish, then bundle dist\Drops-Setup-<version>.exe
 ```
 
-**Release.** Bump the version in both files, build the installer, commit, then:
+**2. Tag and publish.**
 
 ```powershell
 git tag vX.Y.Z
@@ -101,16 +148,20 @@ git push origin main vX.Y.Z
 gh release create vX.Y.Z dist\Drops-Setup-X.Y.Z.exe --title "Drops vX.Y.Z" --notes "..."
 ```
 
-**macOS and Linux.** Publishing that release starts `.github/workflows/unix-release.yml`, which
-builds the same tag on GitHub's runners and attaches the `.tar.gz` and the two `.dmg` files.
-To try a Unix build locally: `./build-unix.ps1 -Rid linux-x64`.
+**3. macOS and Linux follow on their own.** Publishing the release starts
+`.github/workflows/unix-release.yml`, which builds the same tag on GitHub's runners and attaches
+the `.tar.gz` and the two `.dmg` files. To try a Unix build locally:
 
-## Assets
+```powershell
+.\build-unix.ps1 -Rid linux-x64
+```
 
-`Assets/` is generated from the Drops web kit by `tools/make-assets.py`: the fonts (Inter and
-Bricolage Grotesque, pinned to the weights the page uses), the sage droplet icon and the banner.
-Both fonts are under the SIL Open Font License.
+## Credits
+
+The typefaces are [Inter](https://rsms.me/inter/) and
+[Bricolage Grotesque](https://github.com/ateliertriay/bricolage), both under the SIL Open Font
+License. They are pinned to the weights the interface uses by `tools/make-assets.py`.
 
 ## License
 
-MIT. See `LICENSE.txt`.
+MIT. See [LICENSE.txt](LICENSE.txt).
