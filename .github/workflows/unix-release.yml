@@ -48,7 +48,7 @@ jobs:
         run: gh release upload "$TAG" "$ASSET" --clobber
 
   macos:
-    runs-on: macos-14
+    runs-on: macos-latest
     strategy:
       fail-fast: false
       matrix:
