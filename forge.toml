@@ -1,0 +1,121 @@
+# Drops installer -- built with Forge (https://github.com/fezcode/Forge)
+#
+#   .\build-installer.ps1          publish + build dist/Drops-Setup-<version>.exe
+#
+# Keep [app] version in step with <Version> in Drops.csproj.
+
+[app]
+name    = "Drops"
+version = "0.1.0"
+id      = "com.fezcode.drops"
+icon    = "Assets/drops-icon.ico"
+
+[meta]
+publisher   = "Fezcode"
+homepage    = "https://github.com/fezcode/drops-for-desktop"
+support_url = "https://github.com/fezcode/drops-for-desktop/issues"
+comments    = "Send a file to your other device, from the desktop and the tray. Files delete themselves after an hour."
+
+[ui]
+theme        = "glass"
+window_title = "Drops ${app.version} Setup"
+
+[install]
+# Program Files, matching Atelier, Descry and Timp. Forge elevates automatically for this path.
+default_dir = "${PROGRAMFILES}/Drops"
+
+[uninstall]
+keep          = []
+settings_dirs = ["${APPDATA}/fezcode/Drops"]   # offered as "Also remove my settings and data"
+
+# --- wizard -----------------------------------------------------------------
+
+[[steps]]
+type  = "welcome"
+title = "Drops ${app.version}"
+body  = "This will install Drops ${app.version} on your computer.\n\nDrops sends a file to your other device. It lives in the tray, and everything deletes itself after an hour.\n\nClick Next to continue."
+
+[[steps]]
+type           = "license"
+title          = "License Agreement"
+body           = "Please review the license terms below before continuing."
+file           = "LICENSE.txt"
+require_scroll = true
+
+# Every step needs an explicit title and body: the themes render
+# step.title/step.body directly, so a step without them draws a blank pane.
+[[steps]]
+type  = "folder"
+title = "Select Folder"
+body  = "Choose where to install Drops ${app.version}."
+
+[[steps]]
+type  = "shortcuts"
+title = "Select Optional Tasks"
+body  = "Check the items you would like the installer to perform."
+
+[[steps]]
+type  = "install"
+title = "Installing..."
+body  = "Copying files to your system."
+
+[[steps]]
+type  = "finish"
+title = "Installation Complete"
+body  = "Drops has been installed successfully.\n\nSign in with the account you were given. Closing the window keeps Drops in the tray."
+
+[[steps.launches]]
+kind    = "app"
+target  = "${INSTALLDIR}/Drops.exe"
+label   = "Launch Drops"
+checked = true
+
+# --- payload ----------------------------------------------------------------
+
+# The whole self-contained publish output. Produced by publish.ps1 -- deliberately
+# NOT single-file, so the runtime has nothing to unpack into %TEMP% on first launch.
+[[dirs]]
+src = "Publish"
+dst = "${INSTALLDIR}"
+
+[[files]]
+src = "LICENSE.txt"
+dst = "${INSTALLDIR}/LICENSE.txt"
+
+[[files]]
+src = "README.md"
+dst = "${INSTALLDIR}/README.md"
+
+# --- shortcuts --------------------------------------------------------------
+
+[[shortcuts]]
+target   = "${INSTALLDIR}/Drops.exe"
+location = "${DESKTOP}"
+name     = "Drops"
+icon     = "${INSTALLDIR}/Drops.exe"
+label    = "Create a desktop shortcut"
+optional = true
+default  = true
+
+[[shortcuts]]
+target   = "${INSTALLDIR}/Drops.exe"
+location = "${STARTMENU}/Fezcode"
+name     = "Drops"
+icon     = "${INSTALLDIR}/Drops.exe"
+label    = "Create a Start Menu entry"
+optional = true
+default  = true
+
+# --- registry ---------------------------------------------------------------
+
+[[registry]]
+hive  = "HKCU"
+key   = "Software\\Fezcode\\Drops"
+value = "InstallDir"
+data  = "${INSTALLDIR}"
+
+[[registry]]
+hive  = "HKCU"
+key   = "Software\\Fezcode\\Drops"
+value = "Version"
+data  = "${app.version}"

@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <!-- Single source of truth for the version. forge.toml must be kept in step with it. -->
+    <Version>0.1.0</Version>
+    <Company>Fezcode</Company>
+    <Product>Drops</Product>
+    <AssemblyName>Drops</AssemblyName>
+    <RootNamespace>Drops</RootNamespace>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\drops-icon.ico</ApplicationIcon>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+  <!-- Startup performance, as in Atelier: precompile so the Avalonia start path is not JITted on every launch. -->
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <TieredPGO>true</TieredPGO>
+    <EventSourceSupport>false</EventSourceSupport>
+    <MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Only what the app loads. Assets\ also holds the README banner and the 1024px icon master. -->
+    <AvaloniaResource Include="Assets\Fonts\*.ttf;Assets\drops-icon.ico;Assets\icon-32.png;Assets\icon-256.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.1.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="11.1.0" />
+    <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.0" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="11.1.0">
+      <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>
+      <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
+    </PackageReference>
+    <!-- The colour field behind the tiles is a Skia shader. Pinned to the version
+         Avalonia.Skia 11.1.0 already brings in, so this is a direct reference, not a second copy. -->
+    <PackageReference Include="SkiaSharp" Version="2.88.8" />
+    <!-- Encrypts the saved session on Windows (DPAPI). Not used on macOS or Linux. -->
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+    <!-- Pulled in transitively by Avalonia for Linux/DBus. Avalonia 11.1.0 asks for 0.16.0,
+         which carries GHSA-xrw6-gwf8-vvr9; this is the fixed version, as pinned in Atelier. -->
+    <PackageReference Include="Tmds.DBus.Protocol" Version="0.94.2" />
+  </ItemGroup>
+</Project>

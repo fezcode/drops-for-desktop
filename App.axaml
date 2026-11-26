@@ -1,0 +1,270 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Drops.App"
+             Name="Drops"
+             RequestedThemeVariant="Light">
+
+  <!-- The Fezcode Studio kit, "Daylight": the tokens from fz.css. -->
+  <Application.Resources>
+    <SolidColorBrush x:Key="PaperBrush" Color="#faf9f6" />
+    <SolidColorBrush x:Key="InkBrush" Color="#16130f" />
+    <SolidColorBrush x:Key="SoftBrush" Color="#6c655d" />
+    <SolidColorBrush x:Key="WashBrush" Color="#0E16130F" />        <!-- rgba(22,19,15,.055) -->
+    <SolidColorBrush x:Key="WashHoverBrush" Color="#1C16130F" />   <!-- rgba(22,19,15,.11) -->
+    <SolidColorBrush x:Key="FieldLineBrush" Color="#1F16130F" />   <!-- rgba(22,19,15,.12) -->
+    <SolidColorBrush x:Key="TerraBrush" Color="#c96442" />
+    <SolidColorBrush x:Key="SageBrush" Color="#3f7a5c" />
+    <SolidColorBrush x:Key="BrassBrush" Color="#e3b65b" />
+    <SolidColorBrush x:Key="DangerBrush" Color="#b3261e" />
+    <SolidColorBrush x:Key="SageTextBrush" Color="#3a5a49" />
+
+    <FontFamily x:Key="TextFont">avares://Drops/Assets/Fonts#Inter</FontFamily>
+    <FontFamily x:Key="DisplayFont">avares://Drops/Assets/Fonts#Bricolage Grotesque</FontFamily>
+    <FontFamily x:Key="LogoFont">avares://Drops/Assets/Fonts#Bricolage Grotesque Small</FontFamily>
+    <FontFamily x:Key="MonoFont">Cascadia Mono, Consolas, Menlo, DejaVu Sans Mono, monospace</FontFamily>
+
+    <!-- .field: the Fluent text box, recoloured. White, a faint line, an ink line when focused. -->
+    <SolidColorBrush x:Key="TextControlBackground" Color="#ffffff" />
+    <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="#ffffff" />
+    <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="#ffffff" />
+    <SolidColorBrush x:Key="TextControlBorderBrush" Color="#1F16130F" />
+    <SolidColorBrush x:Key="TextControlBorderBrushPointerOver" Color="#1F16130F" />
+    <SolidColorBrush x:Key="TextControlBorderBrushFocused" Color="#16130f" />
+    <SolidColorBrush x:Key="TextControlForeground" Color="#16130f" />
+    <SolidColorBrush x:Key="TextControlForegroundPointerOver" Color="#16130f" />
+    <SolidColorBrush x:Key="TextControlForegroundFocused" Color="#16130f" />
+    <SolidColorBrush x:Key="TextControlPlaceholderForeground" Color="#8a857e" />
+    <SolidColorBrush x:Key="TextControlPlaceholderForegroundPointerOver" Color="#8a857e" />
+    <SolidColorBrush x:Key="TextControlPlaceholderForegroundFocused" Color="#8a857e" />
+    <SolidColorBrush x:Key="TextControlSelectionHighlightColor" Color="#16130f" />
+    <Thickness x:Key="TextControlBorderThemeThickness">1.5</Thickness>
+    <Thickness x:Key="TextControlBorderThemeThicknessFocused">2</Thickness>
+  </Application.Resources>
+
+  <Application.Styles>
+    <FluentTheme />
+
+    <!-- .fz-btn: the solid ink button. It lifts on hover and settles when pressed. -->
+    <Style Selector="Button.btn">
+      <Setter Property="Background" Value="{StaticResource InkBrush}" />
+      <Setter Property="Foreground" Value="White" />
+      <Setter Property="FontFamily" Value="{StaticResource TextFont}" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="Padding" Value="24,13.5" />
+      <Setter Property="CornerRadius" Value="14" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="RenderTransform" Value="translateY(0px) scale(1)" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.25" Easing="0.2,0.8,0.2,1" />
+        </Transitions>
+      </Setter>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}">
+            <ContentPresenter Content="{TemplateBinding Content}"
+                              Foreground="{TemplateBinding Foreground}"
+                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                              VerticalAlignment="Center" />
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button.btn:pointerover">
+      <Setter Property="RenderTransform" Value="translateY(-2px) scale(1)" />
+    </Style>
+    <Style Selector="Button.btn:pressed">
+      <Setter Property="RenderTransform" Value="translateY(0px) scale(0.98)" />
+    </Style>
+    <Style Selector="Button.btn:disabled">
+      <Setter Property="Opacity" Value="0.5" />
+      <Setter Property="RenderTransform" Value="translateY(0px) scale(1)" />
+    </Style>
+    <Style Selector="Button.btn.quiet">
+      <Setter Property="Background" Value="{StaticResource WashBrush}" />
+      <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+    </Style>
+    <Style Selector="Button.btn.small">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="Padding" Value="15,7.5" />
+      <Setter Property="CornerRadius" Value="12" />
+    </Style>
+
+    <!-- The title bar's own minimize, maximize and close. -->
+    <Style Selector="Button.caption">
+      <Setter Property="Width" Value="40" />
+      <Setter Property="Height" Value="28" />
+      <Setter Property="CornerRadius" Value="10" />
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+      <Setter Property="Focusable" Value="False" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.2" />
+        </Transitions>
+      </Setter>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}">
+            <ContentPresenter Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button.caption:pointerover">
+      <Setter Property="Background" Value="{StaticResource WashHoverBrush}" />
+    </Style>
+    <Style Selector="Button.caption.close:pointerover">
+      <Setter Property="Background" Value="{StaticResource DangerBrush}" />
+      <Setter Property="Foreground" Value="White" />
+    </Style>
+
+    <!-- .fz-chip: the pale pills in the top bar. -->
+    <Style Selector="Button.chip">
+      <Setter Property="Background" Value="{StaticResource WashBrush}" />
+      <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+      <Setter Property="FontFamily" Value="{StaticResource TextFont}" />
+      <Setter Property="FontWeight" Value="Medium" />
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="Padding" Value="16,8.5" />
+      <Setter Property="CornerRadius" Value="99" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.2" />
+        </Transitions>
+      </Setter>
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}" CornerRadius="{TemplateBinding CornerRadius}" Padding="{TemplateBinding Padding}">
+            <ContentPresenter Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" />
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button.chip:pointerover">
+      <Setter Property="Background" Value="{StaticResource WashHoverBrush}" />
+    </Style>
+    <Style Selector="Button.chip.small">
+      <Setter Property="FontSize" Value="13.5" />
+      <Setter Property="Padding" Value="13,6.5" />
+    </Style>
+
+    <!-- .remove: the underlined text link at the end of each file's row. -->
+    <Style Selector="Button.remove">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource SoftBrush}" />
+      <Setter Property="FontFamily" Value="{StaticResource TextFont}" />
+      <Setter Property="FontWeight" Value="Medium" />
+      <Setter Property="FontSize" Value="13.5" />
+      <Setter Property="Padding" Value="6,7.5" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+            <ContentPresenter Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}" VerticalAlignment="Center" />
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="Button.remove:pointerover">
+      <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+    </Style>
+    <Style Selector="Button.remove:disabled">
+      <Setter Property="Opacity" Value="0.5" />
+    </Style>
+
+    <!-- .field: text inputs. Colours come from the TextControl resources above. -->
+    <Style Selector="TextBox.field">
+      <Setter Property="FontFamily" Value="{StaticResource TextFont}" />
+      <Setter Property="FontSize" Value="17" />
+      <Setter Property="Padding" Value="14.5,12" />
+      <Setter Property="CornerRadius" Value="14" />
+      <Setter Property="MinHeight" Value="52" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="SelectionForegroundBrush" Value="{StaticResource PaperBrush}" />
+    </Style>
+
+    <!-- <summary>: the line that opens a .note. The triangle turns when it is open. -->
+    <Style Selector="ToggleButton.summary">
+      <Setter Property="Background" Value="Transparent" />
+      <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+      <Setter Property="FontFamily" Value="{StaticResource TextFont}" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="FontSize" Value="15" />
+      <Setter Property="Padding" Value="0,14" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+            <StackPanel Orientation="Horizontal" Spacing="7">
+              <Path x:Name="Marker" Data="M0,0 L8,5 L0,10 Z" Fill="{TemplateBinding Foreground}"
+                    Width="8" Height="10" VerticalAlignment="Center" />
+              <ContentPresenter Content="{TemplateBinding Content}" Foreground="{TemplateBinding Foreground}"
+                                LineHeight="23.25" VerticalAlignment="Center" />
+            </StackPanel>
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="ToggleButton.summary:checked /template/ Path#Marker">
+      <Setter Property="RenderTransform" Value="rotate(90deg)" />
+    </Style>
+
+    <!-- The drop zone grows a touch while a file is held over the window. -->
+    <Style Selector="Border.zone">
+      <Setter Property="RenderTransform" Value="scale(1)" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.5" Easing="0.2,0.8,0.2,1" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Border.zone.over">
+      <Setter Property="RenderTransform" Value="scale(1.02)" />
+    </Style>
+
+    <!-- .file: one white card per file. It eases in from just above. -->
+    <Style Selector="Border.file">
+      <Setter Property="Background" Value="White" />
+      <Setter Property="CornerRadius" Value="20" />
+      <Setter Property="Padding" Value="18,15" />
+      <Setter Property="BoxShadow" Value="0 1 0 0 #0A16130F" />
+      <Setter Property="Transitions">
+        <Transitions>
+          <DoubleTransition Property="Opacity" Duration="0:0:0.6" Easing="0.2,0.8,0.2,1" />
+          <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.6" Easing="0.2,0.8,0.2,1" />
+        </Transitions>
+      </Setter>
+    </Style>
+    <Style Selector="Border.file.failed">
+      <Setter Property="BoxShadow" Value="inset 0 0 0 2 #b3261e" />
+    </Style>
+
+    <Style Selector="TextBlock.label">
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="LineHeight" Value="21.7" />
+      <Setter Property="Margin" Value="0,8,0,0" />
+    </Style>
+    <Style Selector="TextBlock.err">
+      <Setter Property="FontSize" Value="14.5" />
+      <Setter Property="FontWeight" Value="Medium" />
+      <Setter Property="LineHeight" Value="22.5" />
+      <Setter Property="MinHeight" Value="20.3" />
+      <Setter Property="Margin" Value="0,4,0,0" />
+      <Setter Property="TextWrapping" Value="Wrap" />
+      <Setter Property="Foreground" Value="{StaticResource DangerBrush}" />
+    </Style>
+    <Style Selector="TextBlock.err.ok">
+      <Setter Property="Foreground" Value="{StaticResource SageBrush}" />
+    </Style>
+    <Style Selector="TextBlock.h2">
+      <Setter Property="FontSize" Value="16" />
+      <Setter Property="FontWeight" Value="Bold" />
+    </Style>
+  </Application.Styles>
+</Application>

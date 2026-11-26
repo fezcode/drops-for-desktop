@@ -1,0 +1,13 @@
+[Bb]in/
+[Oo]bj/
+.vs/
+.vscode/
+*.user
+.DS_Store
+*.swp
+
+Publish/
+dist/
+*.stackdump
+TestResults/
+__pycache__/

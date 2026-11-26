@@ -1,0 +1,161 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:c="using:Drops.Controls"
+        x:Class="Drops.Views.MainWindow"
+        Title="Drops"
+        Icon="/Assets/drops-icon.ico"
+        Width="820" Height="880" MinWidth="380" MinHeight="480"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource PaperBrush}"
+        Foreground="{StaticResource InkBrush}"
+        FontFamily="{StaticResource TextFont}"
+        FontSize="17">
+
+  <!-- One page, as in static/index.html: a top bar, then either the sign-in tile or the drop. -->
+  <!-- Root takes the window's off-screen margin: a maximized window on Windows hangs a few
+       pixels over every screen edge, and without this the edges of the page are cut off. -->
+  <DockPanel x:Name="Root">
+
+    <!-- The title bar: drawn by Drops, in the kit's look. Drag it to move, double-click to maximize. -->
+    <Grid x:Name="TitleBar" DockPanel.Dock="Top" Height="40" ColumnDefinitions="*,Auto"
+          Background="{StaticResource PaperBrush}">
+      <StackPanel x:Name="TitleLabel" Orientation="Horizontal" Spacing="8" Margin="14,0,0,0"
+                  VerticalAlignment="Center" IsHitTestVisible="False">
+        <Image Source="/Assets/icon-32.png" Width="16" Height="16" />
+        <TextBlock Text="Drops" FontSize="13" FontWeight="Medium" Foreground="{StaticResource SoftBrush}"
+                   VerticalAlignment="Center" />
+      </StackPanel>
+      <StackPanel x:Name="CaptionButtons" Grid.Column="1" Orientation="Horizontal" Spacing="4"
+                  Margin="0,0,6,0" VerticalAlignment="Center">
+        <Button x:Name="MinButton" Classes="caption" ToolTip.Tip="Minimize">
+          <Path Data="M0,5 H10" Width="10" Height="10" StrokeThickness="1.2"
+                Stroke="{Binding $parent[Button].Foreground}" />
+        </Button>
+        <Button x:Name="MaxButton" Classes="caption" ToolTip.Tip="Maximize">
+          <Path x:Name="MaxGlyph" Data="M0.5,0.5 H9.5 V9.5 H0.5 Z" Width="10" Height="10" StrokeThickness="1.2"
+                Stroke="{Binding $parent[Button].Foreground}" />
+        </Button>
+        <Button x:Name="CloseButton" Classes="caption close" ToolTip.Tip="Close">
+          <Path Data="M0,0 L10,10 M10,0 L0,10" Width="10" Height="10" StrokeThickness="1.2"
+                Stroke="{Binding $parent[Button].Foreground}" />
+        </Button>
+      </StackPanel>
+    </Grid>
+
+  <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+    <Border x:Name="Page" MaxWidth="720" Padding="32,0,32,40">
+      <StackPanel>
+
+        <!-- .fz-bar -->
+        <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,8,0,20">
+          <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+            <c:MorphMark />
+            <TextBlock Text="Drops" FontFamily="{StaticResource LogoFont}" FontWeight="Bold" FontSize="20"
+                       LetterSpacing="-0.4" VerticalAlignment="Center" />
+          </StackPanel>
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+            <Button x:Name="AllApps" Classes="chip" Content="All apps" />
+          </StackPanel>
+        </Grid>
+
+        <!-- #login -->
+        <Border x:Name="Login" CornerRadius="32" ClipToBounds="True" Margin="0,8,0,0" IsVisible="False">
+          <Panel>
+            <c:FlowSurface x:Name="LoginFlow" />
+            <c:Shapes Kind="Falling" />
+            <StackPanel x:Name="LoginBody" Margin="48">
+              <TextBlock x:Name="LoginTitle" Text="Sign in to send a file"
+                         FontFamily="{StaticResource DisplayFont}" FontWeight="Bold" FontSize="60"
+                         TextWrapping="Wrap" HorizontalAlignment="Left" Margin="0,0,0,28" />
+              <StackPanel x:Name="LoginForm" HorizontalAlignment="Left" Spacing="8">
+                <TextBlock Classes="label" Text="User name" />
+                <TextBox x:Name="User" Classes="field" />
+                <TextBlock Classes="label" Text="Password" />
+                <TextBox x:Name="Pass" Classes="field" PasswordChar="•" />
+                <TextBlock x:Name="LoginErr" Classes="err" />
+                <Button x:Name="SignIn" Classes="btn" Content="Sign in" IsDefault="True"
+                        HorizontalAlignment="Stretch" Margin="0,10,0,0" />
+              </StackPanel>
+              <TextBlock Text="Accounts are by invitation. There is no sign-up." FontSize="14.5" LineHeight="22.5"
+                         Foreground="{StaticResource SageTextBrush}" TextWrapping="Wrap" Margin="0,22,0,0" />
+            </StackPanel>
+          </Panel>
+        </Border>
+
+        <!-- #app -->
+        <StackPanel x:Name="AppSection" IsVisible="False">
+
+          <!-- .zone -->
+          <Border x:Name="Zone" Classes="zone" CornerRadius="32" ClipToBounds="True" Margin="0,8,0,0">
+            <Panel>
+              <c:FlowSurface x:Name="ZoneFlow" />
+              <c:Shapes Kind="Rings" />
+              <StackPanel x:Name="ZoneBody" Margin="22,72" Spacing="14" HorizontalAlignment="Center">
+                <TextBlock x:Name="ZoneTitle" Text="Put files here"
+                           FontFamily="{StaticResource DisplayFont}" FontWeight="Bold" FontSize="56"
+                           TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Center" />
+                <TextBlock x:Name="ZoneHint" FontSize="15.5" LineHeight="24" MaxWidth="346"
+                           Foreground="{StaticResource SageTextBrush}"
+                           TextAlignment="Center" TextWrapping="Wrap" HorizontalAlignment="Center" Margin="0,0,0,8" />
+                <Button x:Name="Pick" Classes="btn" Content="Choose files" HorizontalAlignment="Center" />
+              </StackPanel>
+            </Panel>
+          </Border>
+
+          <!-- details.note: send a piece of text -->
+          <Border Background="{StaticResource WashBrush}" CornerRadius="20" Padding="18,0" Margin="0,12,0,0">
+            <StackPanel>
+              <ToggleButton x:Name="TextToggle" Classes="summary" Content="Send a piece of text instead" />
+              <StackPanel x:Name="TextPanel" IsVisible="False">
+                <TextBox x:Name="TextNote" Classes="field" AcceptsReturn="True" TextWrapping="Wrap"
+                         Watermark="A link, a note, a code" MinHeight="123" MaxHeight="400"
+                         VerticalContentAlignment="Top" />
+                <Button x:Name="SendText" Classes="btn small" Content="Send text"
+                        HorizontalAlignment="Left" Margin="0,10,0,16" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+          <!-- On the way in -->
+          <StackPanel x:Name="QueueWrap" Margin="0,30,0,0" IsVisible="False">
+            <TextBlock Classes="h2" Text="On the way in" Margin="4,0,4,12" />
+            <StackPanel x:Name="Queue" Spacing="8" />
+          </StackPanel>
+
+          <!-- In the drop -->
+          <StackPanel Margin="0,30,0,0">
+            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
+              <TextBlock Classes="h2" Text="In the drop" Margin="4,0" VerticalAlignment="Center" />
+              <Button x:Name="Clear" Grid.Column="1" Classes="chip small" Content="Remove all" IsVisible="False" />
+            </Grid>
+            <StackPanel x:Name="List" Spacing="8" />
+          </StackPanel>
+
+          <TextBlock x:Name="Usage" FontSize="13.5" LineHeight="21" Foreground="{StaticResource SoftBrush}"
+                     TextAlignment="Center" TextWrapping="Wrap" Margin="4,22,4,0" />
+
+          <!-- details.note.own-pw -->
+          <Border Background="{StaticResource WashBrush}" CornerRadius="20" Padding="18,0" Margin="0,22,0,0">
+            <StackPanel>
+              <ToggleButton x:Name="PwToggle" Classes="summary" Content="Change your password" />
+              <StackPanel x:Name="PwForm" IsVisible="False" HorizontalAlignment="Left"
+                          Spacing="8" Margin="0,0,0,16">
+                <TextBlock Classes="label" Text="Current password" Margin="0" />
+                <TextBox x:Name="PwCurrent" Classes="field" PasswordChar="•" />
+                <TextBlock Classes="label" Text="New password, 12 characters or longer" />
+                <TextBox x:Name="PwNew" Classes="field" PasswordChar="•" />
+                <TextBlock Classes="label" Text="New password again" />
+                <TextBox x:Name="PwRepeat" Classes="field" PasswordChar="•" />
+                <TextBlock x:Name="PwMsg" Classes="err" />
+                <Button x:Name="PwSubmit" Classes="btn small" Content="Change password"
+                        HorizontalAlignment="Left" Margin="0,10,0,0" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+
+      </StackPanel>
+    </Border>
+  </ScrollViewer>
+  </DockPanel>
+</Window>
