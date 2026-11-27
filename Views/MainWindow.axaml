@@ -126,7 +126,11 @@
           <StackPanel Margin="0,30,0,0">
             <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,12">
               <TextBlock Classes="h2" Text="In the drop" Margin="4,0" VerticalAlignment="Center" />
-              <Button x:Name="Clear" Grid.Column="1" Classes="chip small" Content="Remove all" IsVisible="False" />
+              <!-- .group-actions -->
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Button x:Name="DownloadAll" Classes="chip small" Content="Download all" IsVisible="False" />
+                <Button x:Name="Clear" Classes="chip small" Content="Remove all" IsVisible="False" />
+              </StackPanel>
             </Grid>
             <StackPanel x:Name="List" Spacing="8" />
           </StackPanel>

@@ -3,7 +3,7 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <!-- Single source of truth for the version. forge.toml must be kept in step with it. -->
-    <Version>0.1.0</Version>
+    <Version>0.1.1</Version>
     <Company>Fezcode</Company>
     <Product>Drops</Product>
     <AssemblyName>Drops</AssemblyName>

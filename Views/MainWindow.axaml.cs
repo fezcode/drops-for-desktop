@@ -90,6 +90,7 @@ public partial class MainWindow : Window
             EnqueueText(t);
             TextNote.Text = "";
         };
+        DownloadAll.Click += async (_, _) => await SaveAll();
         Clear.Click += async (_, _) =>
         {
             if (!await Confirm("Remove everything from the drop?", "Remove all")) return;
@@ -455,6 +456,8 @@ public partial class MainWindow : Window
         List.Children.Clear();
         rows.Clear();
         Clear.IsVisible = files.Length > 0;
+        DownloadAll.IsVisible = files.Length > 0;
+        ToolTip.SetTip(DownloadAll, files.Length == 1 ? "One file, as a zip" : files.Length + " files in one zip");
         if (files.Length == 0)
         {
             List.Children.Add(new Border
@@ -562,6 +565,69 @@ public partial class MainWindow : Window
         button.Content = "Save";
         button.IsEnabled = true;
         if (reply.Status is 401 or 404) await Refresh();
+    }
+
+    /// <summary>
+    /// "Download all", as on the page: everything in the drop as one zip. The server is asked first,
+    /// so nothing is created on disk when the drop is empty or the server is older than the feature.
+    /// </summary>
+    async Task SaveAll()
+    {
+        DownloadAll.IsEnabled = false;
+        DownloadAll.Content = "Preparing";
+        var (reply, response, fileName) = await client.OpenAll();
+        using (response)
+        {
+            if (response != null)
+            {
+                var target = await StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+                {
+                    Title = "Save everything in the drop", SuggestedFileName = fileName, DefaultExtension = "zip",
+                    ShowOverwritePrompt = true,
+                    FileTypeChoices = [new FilePickerFileType("Zip archive") { Patterns = ["*.zip"] }],
+                });
+                if (target == null)
+                {
+                    DownloadAll.Content = "Download all";
+                    DownloadAll.IsEnabled = true;
+                    return;
+                }
+                DownloadAll.Content = "Saving";
+                try
+                {
+                    await using (var stream = await target.OpenWriteAsync())
+                        reply = await DropsClient.Finish(response, stream);
+                }
+                catch (Exception e) when (e is IOException or UnauthorizedAccessException)
+                {
+                    reply = new Reply(0, "");
+                }
+                // A zip cut off half-way does not open; do not leave one behind.
+                if (!reply.Ok)
+                {
+                    try { await target.DeleteAsync(); }
+                    catch (Exception e) when (e is IOException or UnauthorizedAccessException) { }
+                }
+            }
+        }
+
+        DownloadAll.Content = reply.Status switch
+        {
+            200 => "Saved",
+            404 when reply.Text == "the drop is empty" => "Nothing to save",
+            404 => "Not on this server yet",
+            401 => "Signed out",
+            _ => "Not saved",
+        };
+        await Task.Delay(reply.Status == 404 && reply.Text != "the drop is empty" ? 2600 : 1600);
+        DownloadAll.Content = "Download all";
+        DownloadAll.IsEnabled = true;
+        if (reply.Status == 401)
+        {
+            client.Forget();
+            Show(false);
+        }
+        else if (reply.Status == 404) await Refresh();
     }
 
     /// <summary>The page opens pictures, videos and text in a new tab; here they open in the system's own viewer.</summary>

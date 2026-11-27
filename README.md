@@ -40,6 +40,7 @@ the Fezcode Studio "Daylight" kit, and it talks to the Drops server through its 
 | **Put files in** | Drag them onto the window, paste them, or choose them. They are sent one at a time, so progress stays honest on a slow link. |
 | **Send text** | A link, a note, a code. It arrives as a small text file you can copy with one click. |
 | **Take files out** | Save a file anywhere, view pictures and video in your own viewer, copy text, or remove what you no longer need. |
+| **Download all** | Everything in the drop at once, saved as one zip. |
 | **Watch the clock** | Every file carries a gauge showing how long it has left before it deletes itself. |
 | **Live in the tray** | Closing the window keeps Drops running. The tray icon tells you how many files are in the drop. |
 | **Stay signed in** | The session is kept between runs, until you sign out from the tray. |

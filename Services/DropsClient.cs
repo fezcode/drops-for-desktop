@@ -194,6 +194,61 @@ public sealed class DropsClient
         }
     }
 
+    /// <summary>
+    /// Starts fetching everything in the drop as one zip (GET /api/all.zip). Only the headers are read,
+    /// so the caller can ask where to save it before any of the body is fetched. On success the open
+    /// response is handed back with the server's suggested file name; the caller disposes it.
+    /// A 404 with the text "the drop is empty" means there is nothing to send. Any other 404 means
+    /// the server is older than "Download all".
+    /// </summary>
+    public async Task<(Reply reply, HttpResponseMessage? response, string fileName)> OpenAll(CancellationToken ct = default)
+    {
+        var req = Request(HttpMethod.Get, "api/all.zip");
+        HttpResponseMessage? res = null;
+        try
+        {
+            res = await http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, ct).ConfigureAwait(false);
+            if (!res.IsSuccessStatusCode)
+            {
+                using var limit = CancellationTokenSource.CreateLinkedTokenSource(ct);
+                limit.CancelAfter(Short);
+                var text = (await res.Content.ReadAsStringAsync(limit.Token).ConfigureAwait(false)).Trim();
+                var reply = new Reply((int)res.StatusCode, text);
+                res.Dispose();
+                return (reply, null, "");
+            }
+            var name = res.Content.Headers.ContentDisposition?.FileNameStar
+                       ?? res.Content.Headers.ContentDisposition?.FileName?.Trim('"');
+            if (string.IsNullOrWhiteSpace(name))
+                name = "drops-" + DateTime.Now.ToString("yyyyMMdd-HHmm", System.Globalization.CultureInfo.InvariantCulture) + ".zip";
+            return (new Reply(200, ""), res, Path.GetFileName(name));
+        }
+        catch (Exception e) when (e is HttpRequestException or IOException or OperationCanceledException)
+        {
+            res?.Dispose();
+            return (new Reply(0, ""), null, "");
+        }
+        finally
+        {
+            req.Dispose();
+        }
+    }
+
+    /// <summary>Copies the body of a response from <see cref="OpenAll"/> into <paramref name="target"/>.</summary>
+    public static async Task<Reply> Finish(HttpResponseMessage response, Stream target, CancellationToken ct = default)
+    {
+        try
+        {
+            await using var body = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
+            await body.CopyToAsync(target, ct).ConfigureAwait(false);
+            return new Reply(200, "");
+        }
+        catch (Exception e) when (e is HttpRequestException or IOException or OperationCanceledException)
+        {
+            return new Reply(0, "");
+        }
+    }
+
     /// <summary>A request body of known length that reports how much of it has been written.</summary>
     sealed class ProgressContent : HttpContent
     {

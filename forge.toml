@@ -6,7 +6,7 @@
 
 [app]
 name    = "Drops"
-version = "0.1.0"
+version = "0.1.1"
 id      = "com.fezcode.drops"
 icon    = "Assets/drops-icon.ico"
 
